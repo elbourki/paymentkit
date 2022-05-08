@@ -1,16 +1,54 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.background {
+  top: 0px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  z-index: -1;
+  background:
+    radial-gradient(circle at top left, #ede9fe, rgba(255, 255, 255, 0) 15%), radial-gradient(circle at 80% 20%, #d8f3f6, rgba(255, 255, 255, 0) 15%)
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+@media screen(md) {
+  .background {
+    background:
+    radial-gradient(circle at 15% 50%, #ede9fe, rgba(255, 255, 255, 0) 25%), radial-gradient(circle at 85% 30%, #d8f3f6, rgba(255, 255, 255, 0) 25%)
+  }
 }
 
-* {
-  box-sizing: border-box;
+.loading {
+  font-size: 0;
+  line-height: 0;
+  vertical-align: top;
+}
+
+.loading:before {
+  width: 20px;
+  height: 20px;
+  content: "";
+  border-radius: 50%;
+  display: block;
+  border: 2px solid;
+  border-color: transparent;
+  border-right-color: #fff;
+  animation: loading .75s infinite linear;
+  margin: 10px auto;
+}
+
+@keyframes loading {
+  to {
+      transform: rotate(1turn)
+  }
+}
+
+.btn {
+  @apply mt-4 w-full rounded-md border-2 bg-teal-600 border-teal-600 leading-10 font-semibold text-white hover:bg-teal-700 hover:border-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-teal-500 transition delay-100 ease-linear text-sm shadow-tiny;
+}
+
+.input {
+  @apply text-sm py-2.5 border-2 mt-1 rounded-md w-full border-gray-200 focus:bg-teal-50 transition-colors delay-100 ease-linear focus:ring-transparent focus:border-teal-500;
 }
