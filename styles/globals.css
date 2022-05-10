@@ -20,6 +20,18 @@
   }
 }
 
+.btn {
+  @apply w-full rounded-md border-2 bg-teal-600 border-teal-600 leading-10 font-semibold text-white hover:bg-teal-700 hover:border-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-teal-500 transition delay-100 ease-linear text-sm shadow-tiny;
+}
+
+.btn:disabled {
+  @apply cursor-default opacity-80 pointer-events-none;
+}
+
+.input {
+  @apply text-sm py-2.5 border-2 mt-1 rounded-md w-full border-gray-200 focus:bg-teal-50 transition-colors delay-100 ease-linear focus:ring-transparent focus:border-teal-500;
+}
+
 .loading {
   font-size: 0;
   line-height: 0;
@@ -43,12 +55,4 @@
   to {
       transform: rotate(1turn)
   }
-}
-
-.btn {
-  @apply mt-4 w-full rounded-md border-2 bg-teal-600 border-teal-600 leading-10 font-semibold text-white hover:bg-teal-700 hover:border-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-teal-500 transition delay-100 ease-linear text-sm shadow-tiny;
-}
-
-.input {
-  @apply text-sm py-2.5 border-2 mt-1 rounded-md w-full border-gray-200 focus:bg-teal-50 transition-colors delay-100 ease-linear focus:ring-transparent focus:border-teal-500;
 }

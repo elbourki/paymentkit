@@ -36,8 +36,8 @@ const Login: NextPage = () => {
       await mutateUser(
         await fetchJson("/api/login", {
           method: "POST",
+          json: {},
           headers: {
-            "Content-Type": "application/json",
             Authorization: "Bearer " + didToken,
           },
         })
@@ -53,7 +53,7 @@ const Login: NextPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8">
+    <div className="min-h-screen flex items-center justify-center p-8 relative">
       <div className="background"></div>
       <form
         className="bg-white w-full max-w-sm border-2 border-gray-100 rounded-md"
@@ -66,7 +66,7 @@ const Login: NextPage = () => {
             don&apos;t have one yet.
           </p>
         </div>
-        <div className="p-8">
+        <div className="p-8 flex flex-col gap-4">
           <Input
             id="email"
             type="email"

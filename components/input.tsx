@@ -3,9 +3,9 @@ import { UseFormRegister } from "react-hook-form";
 
 type Props = {
   id: string;
-  type: string;
+  type?: string;
   label: string;
-  placeholder: string;
+  placeholder?: string;
   register: UseFormRegister<any>;
   errors: {
     [x: string]: any;
@@ -13,19 +13,21 @@ type Props = {
   validation: {
     [x: string]: any;
   };
+  className?: string;
 };
 
 const Input = ({
   id,
-  type,
+  type = "text",
   label,
-  placeholder,
+  placeholder = "",
   register,
   errors,
   validation,
+  className,
 }: Props) => {
   return (
-    <label>
+    <label className={className}>
       <span className="block font-medium text-sm">{label}</span>
       <input
         className={classNames("input", {

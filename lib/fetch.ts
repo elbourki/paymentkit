@@ -1,7 +1,13 @@
 export default async function fetchJson<JSON = unknown>(
   input: RequestInfo,
-  init?: RequestInit
+  init?: RequestInit & {
+    json?: any;
+  }
 ): Promise<JSON> {
+  if (init?.json) {
+    init.body = JSON.stringify(init.json);
+    init.headers = { ...init.headers, "Content-Type": "application/json" };
+  }
   const response = await fetch(input, init);
   const data = await response.json();
 
