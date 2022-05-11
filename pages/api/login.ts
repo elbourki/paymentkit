@@ -5,6 +5,7 @@ import { magic } from "lib/magic";
 import { client } from "lib/graphql";
 import { gql } from "@apollo/client";
 import jwt from "jsonwebtoken";
+import { knock } from "lib/knock";
 
 export default withIronSessionApiRoute(
   async (
@@ -41,7 +42,7 @@ export default withIronSessionApiRoute(
           },
         })
       ).data.insert_users_one;
-      const token = jwt.sign(
+      const hasura_token = jwt.sign(
         {
           "https://hasura.io/jwt/claims": {
             "x-hasura-allowed-roles": ["user"],
@@ -51,9 +52,24 @@ export default withIronSessionApiRoute(
         },
         process.env.HASURA_JWT_SECRET || ""
       );
-
+      await knock.users.identify(user.id, {
+        email: user.email,
+      });
+      const current_time = Math.floor(Date.now() / 1000);
+      const knock_token = jwt.sign(
+        {
+          sub: user.id,
+          iat: current_time,
+          exp: current_time + 60 * 60,
+        },
+        (process.env.KNOCK_SIGNING_KEY || "").replaceAll("\\n", "\n"),
+        {
+          algorithm: "RS256",
+        }
+      );
       req.session.user = {
-        token,
+        hasura_token,
+        knock_token,
         id: user.id,
         email: user.email,
         account: user.account,

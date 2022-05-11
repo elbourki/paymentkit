@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import useSWR from "swr";
 
 export type User = {
-  token: string;
+  hasura_token: string;
+  knock_token: string;
   id: string;
   email: string;
   account: null | {
