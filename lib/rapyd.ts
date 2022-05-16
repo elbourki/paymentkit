@@ -1,6 +1,17 @@
 import { createHmac, randomBytes } from "node:crypto";
 import fetchJson from "./fetch";
 
+interface Response<T> {
+  status: {
+    error_code: string;
+    status: string;
+    message: string;
+    response_code: string;
+    operation_id: string;
+  };
+  data: T;
+}
+
 class Rapyd {
   constructor(
     private _access_key: string,
@@ -9,10 +20,10 @@ class Rapyd {
   ) {}
 
   getCurrencies() {
-    return this.request("/v1/data/currencies");
+    return this.request<Response<any[]>>("/v1/data/currencies");
   }
 
-  private request(
+  private request<T>(
     path: string,
     init?: RequestInit & {
       json?: any;
@@ -37,7 +48,7 @@ class Rapyd {
       timestamp,
       signature,
     };
-    return fetchJson(base_url + path, init);
+    return fetchJson<T>(base_url + path, init);
   }
 
   private generateSignature(

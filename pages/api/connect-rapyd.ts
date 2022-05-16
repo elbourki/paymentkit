@@ -10,7 +10,8 @@ export default withIronSessionApiRoute(
     req: NextApiRequest,
     res: NextApiResponse<User | { message: string }>
   ) => {
-    if (!req.session.user) return res.status(401).end();
+    if (!req.session.user || req.session.user.account)
+      return res.status(401).end();
     try {
       await new Rapyd(
         req.body.access_key,
