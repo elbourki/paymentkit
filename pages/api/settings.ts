@@ -30,6 +30,7 @@ export default withIronSessionApiRoute(
               payment_methods_categories
               default_currency
               allow_tips
+              sandbox
             }
           }
         `,

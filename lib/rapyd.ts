@@ -23,6 +23,39 @@ class Rapyd {
     return this.request<Response<any[]>>("/v1/data/currencies");
   }
 
+  getCountries() {
+    return this.request<Response<any[]>>("/v1/data/countries");
+  }
+
+  getPaymentMethods(country: string, currency?: string) {
+    const params = new URLSearchParams({ country });
+    if (currency) params.append("currency", currency);
+    return this.request<Response<any[]>>(
+      `/v1/payment_methods/country?${params.toString()}`
+    );
+  }
+
+  createCheckout(params: {
+    amount?: number;
+    currency: string;
+    country: string;
+    description?: string;
+    payment_method_type_categories?: string[];
+    fixed_side: "sell" | "buy";
+    requested_currency: string;
+    [k: string]: any;
+  }) {
+    return this.request<
+      Response<{
+        id: string;
+        [k: string]: any;
+      }>
+    >("/v1/checkout", {
+      method: "POST",
+      json: params,
+    });
+  }
+
   private request<T>(
     path: string,
     init?: RequestInit & {

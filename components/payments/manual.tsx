@@ -1,86 +1,98 @@
-import classNames from "classnames";
-import AppLayout from "components/layouts/app";
-import useUser from "lib/auth";
 import fetchJson from "lib/fetch";
-import { useState } from "react";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useState, useEffect } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Select from "react-select";
-import { NextPageWithLayout } from "typings/types";
+import countries from "lib/data/countries.json";
 import currencies from "lib/data/currencies.json";
 import { theme } from "lib/shared";
-
-const payment_methods_categories = [
-  { value: "bank_redirect", label: "Bank redirect" },
-  { value: "bank_transfer", label: "Bank transfer" },
-  { value: "card", label: "Credit cards" },
-  { value: "cash", label: "Cash" },
-  { value: "ewallet", label: "Ewallet" },
-];
+import classNames from "classnames";
 
 type FormValues = {
-  payment_methods_categories: string[];
-  default_currency: string;
-  allow_tips: boolean;
+  country: string;
+  currency: string;
 };
 
-const Settings: NextPageWithLayout = () => {
-  const { user, mutateUser } = useUser();
+export const ManualPayment: React.FC<{ payment: any }> = ({ payment }) => {
+  const [loading, setLoading] = useState(false);
+  const [checkoutId, setCheckoutId] = useState<string>();
+  const [loadingOptions, setLoadingOptions] = useState(false);
+  const [allowedCurrencies, setAllowedCurrencies] = useState<string[]>([]);
   const {
-    register,
     handleSubmit,
     formState: { isValid },
     control,
+    watch,
   } = useForm<FormValues>({
-    defaultValues: {
-      payment_methods_categories:
-        user?.account?.payment_methods_categories || [],
-      default_currency: user?.account?.default_currency,
-      allow_tips: user?.account?.allow_tips || false,
-    },
     mode: "onChange",
   });
-  const [loading, setLoading] = useState(false);
+  const country = watch("country");
+
+  useEffect(() => {
+    (async () => {
+      if (!country) return;
+      setLoadingOptions(true);
+      const options = await fetchJson<{ [k: string]: string[] }>(
+        "/api/options",
+        {
+          method: "POST",
+          json: { id: payment.id, country, card: true },
+        }
+      );
+      setAllowedCurrencies(Object.keys(options));
+      setLoadingOptions(false);
+    })();
+  }, [country, payment.id]);
+
+  useEffect(() => {
+    if (!checkoutId) return;
+    const checkout = new window.RapydCheckoutToolkit({
+      pay_button_text: "Charge card",
+      pay_button_color: "#0d9488",
+      mobile_view: true,
+      id: checkoutId,
+    });
+    checkout.displayCheckout();
+  }, [checkoutId]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
-    try {
-      await mutateUser(
-        await fetchJson("/api/settings", {
-          method: "POST",
-          json: data,
-        })
-      );
-    } catch (error) {
-      console.error(error);
-    }
-    setLoading(false);
+    const checkout = await fetchJson<{ id: string; sandbox: boolean }>(
+      "/api/checkout",
+      {
+        method: "POST",
+        json: {
+          id: payment.id,
+          country: data.country,
+          currency: data.currency,
+          payment_category: "card",
+        },
+      }
+    );
+    setCheckoutId(checkout.id);
   };
+
+  if (checkoutId) return <div id="rapyd-checkout" className="-mx-5"></div>;
 
   return (
     <form
-      className="flex flex-col gap-6 flex-grow p-6 max-w-md self-center w-full"
+      className="flex flex-col gap-6 flex-grow"
       onSubmit={handleSubmit(onSubmit)}
     >
       <Controller
-        name="payment_methods_categories"
+        name="country"
         control={control}
         rules={{
           required: true,
         }}
         render={({ field, fieldState: { error } }) => (
           <label>
-            <span className="block font-medium text-sm mb-1">
-              Allowed payment methods
-            </span>
+            <span className="block font-medium text-sm mb-1">Country</span>
             <Select
               {...field}
-              onChange={(val) => field.onChange(val.map((c) => c.value))}
-              value={payment_methods_categories.filter((c) =>
-                field.value.includes(c.value)
-              )}
-              isMulti={true}
-              isSearchable={false}
-              options={payment_methods_categories}
+              onChange={(val) => field.onChange(val?.iso_alpha2)}
+              value={countries.find((c) => c.iso_alpha2 === field.value)}
+              isMulti={false}
+              options={countries}
               styles={{
                 control: (p, { isFocused }) => ({
                   ...p,
@@ -98,7 +110,6 @@ const Settings: NextPageWithLayout = () => {
                   fontSize: "0.875rem",
                   boxShadow: "none",
                   transition: "border-color 150ms 100ms",
-                  borderRadius: "0.375rem",
                   ":hover": {
                     borderColor: isFocused ? "#14b8a6" : "#e5e7eb",
                   },
@@ -108,30 +119,40 @@ const Settings: NextPageWithLayout = () => {
                   fontWeight: "500",
                   fontSize: "0.875rem",
                 }),
+                input: (p) => ({
+                  ...p,
+                  input: {
+                    boxShadow: "none !important",
+                  },
+                }),
               }}
               theme={theme}
+              getOptionValue={(option) => option?.iso_alpha2 || ""}
+              getOptionLabel={(option) => option.name}
             />
           </label>
         )}
       />
       <Controller
-        name="default_currency"
+        name="currency"
         control={control}
         rules={{
           required: true,
         }}
         render={({ field, fieldState: { error } }) => (
           <label>
-            <span className="block font-medium text-sm mb-1">
-              Default currency
-            </span>
+            <span className="block font-medium text-sm mb-1">Currency</span>
             <Select
               {...field}
               onChange={(val) => field.onChange(val?.code)}
               value={currencies.find((c) => c.code === field.value)}
               isMulti={false}
               isSearchable={false}
-              options={currencies}
+              isLoading={loadingOptions}
+              isDisabled={!country}
+              options={currencies.filter((currency) =>
+                allowedCurrencies.includes(currency.code)
+              )}
               styles={{
                 control: (p, { isFocused }) => ({
                   ...p,
@@ -168,29 +189,13 @@ const Settings: NextPageWithLayout = () => {
           </label>
         )}
       />
-      <label className="inline-flex items-center">
-        <input
-          type="checkbox"
-          {...register("allow_tips")}
-          className="rounded border-gray-300 text-teal-600 shadow-sm focus:border-teal-500 focus:ring-transparent"
-        />
-        <span className="ml-2 font-medium text-gray-800 text-sm">
-          Allow customers to add tips
-        </span>
-      </label>
       <button
         className={classNames("btn mt-auto", { loading })}
         disabled={!isValid || loading}
         type="submit"
       >
-        Save settings
+        Proceed to payment
       </button>
     </form>
   );
 };
-
-Settings.getLayout = function getLayout(page) {
-  return <AppLayout>{page}</AppLayout>;
-};
-
-export default Settings;

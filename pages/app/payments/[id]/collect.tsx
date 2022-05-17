@@ -13,6 +13,10 @@ import { formatValue } from "react-currency-input-field";
 import currencies from "lib/data/currencies.json";
 import { PaymentLink } from "components/payments/link";
 import { PaymentQR } from "components/payments/qr";
+import { ManualPayment } from "components/payments/manual";
+import { withIronSessionSsr } from "iron-session/next";
+import { sessionOptions, User } from "lib/auth";
+import Script from "next/script";
 
 const options = [
   {
@@ -34,11 +38,11 @@ const options = [
     name: "Manual input",
     description: "Type in your customer's credit card details manually",
     icon: MajesticonsCreditcardHandLine,
-    component: PaymentLink,
+    component: ManualPayment,
   },
 ];
 
-const Collect: NextPageWithLayout = () => {
+const Collect: NextPageWithLayout<{ user: User }> = (props) => {
   const {
     query: { id },
   } = useRouter();
@@ -149,11 +153,16 @@ const Collect: NextPageWithLayout = () => {
               ))}
             </div>
           </RadioGroup>
-          <button className="btn" onClick={() => setConfirmed(true)}>
+          <button className="btn mt-auto" onClick={() => setConfirmed(true)}>
             Continue
           </button>
         </>
       )}
+      <Script
+        src={`https://${
+          props.user.account?.sandbox ? "sandbox" : ""
+        }checkouttoolkit.rapyd.net`}
+      />
     </div>
   );
 };
@@ -161,5 +170,11 @@ const Collect: NextPageWithLayout = () => {
 Collect.getLayout = function getLayout(page) {
   return <AppLayout>{page}</AppLayout>;
 };
+
+export const getServerSideProps = withIronSessionSsr(async function ({ req }) {
+  return {
+    props: { user: req.session.user },
+  };
+}, sessionOptions);
 
 export default Collect;

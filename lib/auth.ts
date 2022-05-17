@@ -13,6 +13,7 @@ export type User = {
     payment_methods_categories: string[];
     default_currency: string;
     allow_tips: boolean;
+    sandbox: boolean;
   };
 };
 
