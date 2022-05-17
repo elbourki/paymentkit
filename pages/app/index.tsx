@@ -4,7 +4,7 @@ import Router from "next/router";
 import { NextPageWithLayout } from "typings/types";
 
 const App: NextPageWithLayout = () => {
-  const { user } = useUser({ redirectTo: "/login" });
+  const { user } = useUser();
 
   return <div></div>;
 };

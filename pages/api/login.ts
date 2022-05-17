@@ -33,6 +33,9 @@ export default withIronSessionApiRoute(
                 email
                 account {
                   id
+                  payment_methods_categories
+                  default_currency
+                  allow_tips
                 }
               }
             }

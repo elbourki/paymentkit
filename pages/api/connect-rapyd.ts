@@ -34,6 +34,9 @@ export default withIronSessionApiRoute(
                 }
               ) {
                 id
+                payment_methods_categories
+                default_currency
+                allow_tips
               }
             }
           `,

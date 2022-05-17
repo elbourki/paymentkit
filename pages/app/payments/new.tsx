@@ -9,6 +9,8 @@ import MajesticonsChevronDownLine from "~icons/majesticons/chevron-down-line";
 import Input from "components/input";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import fetchJson, { FetchError } from "lib/fetch";
+import { theme } from "lib/shared";
+import useUser from "lib/auth";
 
 const SingleValue = (props: SingleValueProps<any>) => (
   <>
@@ -30,6 +32,7 @@ type FormValues = {
 };
 
 const NewPayment: NextPageWithLayout = () => {
+  const { user } = useUser();
   const {
     register,
     control,
@@ -40,7 +43,10 @@ const NewPayment: NextPageWithLayout = () => {
     watch,
   } = useForm<FormValues>({
     defaultValues: {
-      currency: currencies.find(({ code }) => code === "USD") || currencies[0],
+      currency:
+        currencies.find(
+          ({ code }) => code === user?.account?.default_currency
+        ) || currencies[0],
     },
     mode: "onChange",
   });
@@ -119,24 +125,16 @@ const NewPayment: NextPageWithLayout = () => {
                 option: (p) => ({
                   ...p,
                   fontWeight: "500",
+                  fontSize: "0.875rem",
                 }),
               }}
-              theme={(theme) => ({
-                ...theme,
-                colors: {
-                  ...theme.colors,
-                  primary: "#0d9488",
-                  primary75: "#0d9488",
-                  primary50: "#ccfbf1",
-                  primary25: "#f0fdfa",
-                },
-              })}
+              theme={theme}
               menuPlacement="top"
               getOptionValue={(option) => option?.code || ""}
               getOptionLabel={(option) =>
                 [option?.code, option?.name].filter(Boolean).join(" - ")
               }
-              className={"flex justify-center"}
+              className="flex justify-center"
               components={{
                 SingleValue,
                 ValueContainer,

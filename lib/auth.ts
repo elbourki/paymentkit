@@ -10,6 +10,9 @@ export type User = {
   email: string;
   account: null | {
     id: string;
+    payment_methods_categories: string[];
+    default_currency: string;
+    allow_tips: boolean;
   };
 };
 
