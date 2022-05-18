@@ -147,7 +147,6 @@ export const ManualPayment: React.FC<{ payment: any }> = ({ payment }) => {
               onChange={(val) => field.onChange(val?.code)}
               value={currencies.find((c) => c.code === field.value)}
               isMulti={false}
-              isSearchable={false}
               isLoading={loadingOptions}
               isDisabled={!country}
               options={currencies.filter((currency) =>
@@ -178,6 +177,12 @@ export const ManualPayment: React.FC<{ payment: any }> = ({ payment }) => {
                   ...p,
                   fontWeight: "500",
                   fontSize: "0.875rem",
+                }),
+                input: (p) => ({
+                  ...p,
+                  input: {
+                    boxShadow: "none !important",
+                  },
                 }),
               }}
               theme={theme}

@@ -50,3 +50,19 @@
   content: "";
   @apply animate-spin w-5 h-5 rounded-full border-2 border-r-white border-transparent my-2.5 mx-auto block;
 }
+
+input[type=file]::file-selector-button {
+  @apply bg-gray-100;
+  -webkit-margin-start: -1rem;
+  -webkit-margin-end: 1rem;
+  border: 0;
+  color: black;
+  cursor: pointer;
+  font-size: .875rem;
+  font-weight: 500;
+  margin-inline-end:1rem;margin-inline-start:-1rem;padding: .625rem 1rem .625rem 2rem
+}
+
+[type='file']:focus {
+  @apply outline-none;
+}

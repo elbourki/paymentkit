@@ -5,6 +5,8 @@ type Props = {
   id: string;
   type?: string;
   label?: string;
+  step?: string;
+  pattern?: string;
   placeholder?: string;
   register?: UseFormRegister<any>;
   errors?: {
@@ -23,6 +25,8 @@ const Input = ({
   placeholder = "",
   register,
   errors,
+  step,
+  pattern,
   validation,
   className,
 }: Props) => {

@@ -11,10 +11,9 @@ export default async function fetchJson<JSON = unknown>(
   const response = await fetch(input, init);
   const data = await response.json();
 
-  if (response.ok) {
-    return data;
-  }
+  if (response.ok) return data;
 
+  console.error(data);
   throw new FetchError({
     message: response.statusText,
     response,

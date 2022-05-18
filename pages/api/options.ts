@@ -39,7 +39,7 @@ const checkout = async (
     payment.account.access_key,
     payment.account.secret_key,
     payment.account.sandbox
-  ).getPaymentMethods(country);
+  ).getPaymentMethods({ country });
   let currencies: {
     [k: string]: Set<string>;
   } = {};

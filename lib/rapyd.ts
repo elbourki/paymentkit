@@ -1,5 +1,15 @@
+import { gql } from "@apollo/client";
 import { createHmac, randomBytes } from "node:crypto";
+import {
+  OptionalExceptFor,
+  RapydCheckout,
+  RapydCountry,
+  RapydCurrency,
+  RapydProduct,
+  RapydSKU,
+} from "typings/types";
 import fetchJson from "./fetch";
+import { client } from "./graphql";
 
 interface Response<T> {
   status: {
@@ -20,37 +30,94 @@ class Rapyd {
   ) {}
 
   getCurrencies() {
-    return this.request<Response<any[]>>("/v1/data/currencies");
+    return this.request<Response<RapydCurrency[]>>("/v1/data/currencies");
   }
 
   getCountries() {
-    return this.request<Response<any[]>>("/v1/data/countries");
+    return this.request<Response<RapydCountry[]>>("/v1/data/countries");
   }
 
-  getPaymentMethods(country: string, currency?: string) {
-    const params = new URLSearchParams({ country });
-    if (currency) params.append("currency", currency);
+  getPaymentMethods(params: {
+    country: string;
+    currency?: string;
+    [k: string]: any;
+  }) {
+    const query = new URLSearchParams();
+    for (let param in params) {
+      if (params[param]) query.append(param, params[param]);
+    }
     return this.request<Response<any[]>>(
-      `/v1/payment_methods/country?${params.toString()}`
+      `/v1/payment_methods/country?${query.toString()}`
     );
   }
 
-  createCheckout(params: {
-    amount?: number;
-    currency: string;
-    country: string;
-    description?: string;
-    payment_method_type_categories?: string[];
-    fixed_side: "sell" | "buy";
-    requested_currency: string;
-    [k: string]: any;
-  }) {
-    return this.request<
-      Response<{
-        id: string;
-        [k: string]: any;
-      }>
-    >("/v1/checkout", {
+  createCheckout(
+    params: OptionalExceptFor<RapydCheckout, "country" | "currency">
+  ) {
+    return this.request<Response<RapydCheckout>>("/v1/checkout", {
+      method: "POST",
+      json: params,
+    });
+  }
+
+  getProducts(
+    params: {
+      limit?: number;
+      ending_before?: string;
+      starting_after?: string;
+      [k: string]: any;
+    } = {}
+  ) {
+    const query = new URLSearchParams();
+    for (let param in params) {
+      if (params[param]) query.append(param, params[param]);
+    }
+    return this.request<Response<RapydProduct[]>>(
+      `/v1/products?${query.toString()}`
+    );
+  }
+
+  getProduct(id: string) {
+    return this.request<Response<RapydProduct>>(`/v1/products/${id}`);
+  }
+
+  createProduct(params: OptionalExceptFor<RapydProduct, "type" | "name">) {
+    return this.request<Response<RapydProduct>>("/v1/products", {
+      method: "POST",
+      json: params,
+    });
+  }
+
+  updateProduct(id: string, params: Pick<RapydProduct, "name" | "metadata">) {
+    return this.request<Response<RapydProduct>>(`/v1/products/${id}`, {
+      method: "POST",
+      json: params,
+    });
+  }
+
+  deleteProduct(id: string) {
+    return this.request<Response<Pick<RapydProduct, "id">>>(
+      `/v1/products/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+  }
+
+  createSKU(
+    params: OptionalExceptFor<
+      RapydSKU,
+      "currency" | "inventory" | "price" | "product"
+    >
+  ) {
+    return this.request<Response<RapydSKU>>("/v1/skus", {
+      method: "POST",
+      json: params,
+    });
+  }
+
+  updateSKU(id: string, params: Pick<RapydProduct, "currency" | "price">) {
+    return this.request<Response<RapydProduct>>(`/v1/skus/${id}`, {
       method: "POST",
       json: params,
     });
@@ -115,6 +182,26 @@ class Rapyd {
     const hashSignature = Buffer.from(hash.digest("hex")).toString("base64");
 
     return hashSignature;
+  }
+
+  static async forAccount(account_id: string) {
+    const account = (
+      await client.query({
+        query: gql`
+          query ($id: uuid!) {
+            accounts_by_pk(id: $id) {
+              access_key
+              secret_key
+              sandbox
+            }
+          }
+        `,
+        variables: {
+          id: account_id,
+        },
+      })
+    ).data.accounts_by_pk;
+    return new this(account.access_key, account.secret_key, account.sandbox);
   }
 }
 

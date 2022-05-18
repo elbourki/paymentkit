@@ -13,9 +13,9 @@ import MajesticonsUserLine from "~icons/majesticons/user-line";
 import MajesticonsCheckboxListDetailLine from "~icons/majesticons/checkbox-list-detail-line";
 import MajesticonsChartBarLine from "~icons/majesticons/chart-bar-line";
 import MajesticonsLogoutHalfCircleLine from "~icons/majesticons/logout-half-circle-line";
-import MajesticonsBoxLine from "~icons/majesticons/box-line";
 import MajesticonsSettingsCogLine from "~icons/majesticons/settings-cog-line";
-import MajesticonsSortHorizontalLine from "~icons/majesticons/sort-horizontal-line";
+import MajesticonsBasket2Line from "~icons/majesticons/basket-2-line";
+import MajesticonsLightningBoltLine from "~icons/majesticons/lightning-bolt-line";
 import {
   KnockFeedProvider,
   NotificationFeedPopover,
@@ -115,12 +115,12 @@ const AppLayout: React.FC<{ children: JSX.Element }> = ({ children }) => {
     {
       link: "/app/payments/new",
       title: "New payment",
-      icon: MajesticonsSortHorizontalLine,
+      icon: MajesticonsLightningBoltLine,
     },
     {
       link: "/app/products",
       title: "Products",
-      icon: MajesticonsBoxLine,
+      icon: MajesticonsBasket2Line,
     },
     {
       link: "/app/settings",
