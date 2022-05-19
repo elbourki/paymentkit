@@ -74,6 +74,9 @@ interface RapydCheckout {
   payment_method_type_categories: string[];
   fixed_side: "sell" | "buy";
   requested_currency: string;
+  metadata?: {
+    [k: string]: string;
+  };
   [k: string]: any;
 }
 

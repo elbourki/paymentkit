@@ -30,7 +30,7 @@ const checkout = async (
       },
     })
   ).data.payments_by_pk;
-  const checkout = await new Rapyd(
+  const { data: checkout } = await new Rapyd(
     payment.account.access_key,
     payment.account.secret_key,
     payment.account.sandbox
@@ -39,11 +39,18 @@ const checkout = async (
     amount: payment.amount,
     currency: payment.currency,
     description: payment.description,
-    fixed_side: "buy",
-    requested_currency: currency,
+    ...(payment.currency !== currency
+      ? {
+          fixed_side: "buy",
+          requested_currency: currency,
+        }
+      : {}),
     payment_method_type_categories: [payment_category],
+    metadata: {
+      payment_id: payment.id,
+    },
   });
-  res.json({ id: checkout.data.id, sandbox: payment.account.sandbox });
+  res.json({ id: checkout.id, sandbox: payment.account.sandbox });
 };
 
 export default checkout;

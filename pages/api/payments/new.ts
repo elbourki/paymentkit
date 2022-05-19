@@ -8,7 +8,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 export default withIronSessionApiRoute(
   async (req: NextApiRequest, res: NextApiResponse<{ id: string }>) => {
     if (!req.session.user?.account) return res.status(401).end();
-    const { currency, amount, description } = req.body;
+    const { currency, amount, description, products } = req.body;
     const id = (
       await client.mutate({
         mutation: gql`
@@ -18,6 +18,7 @@ export default withIronSessionApiRoute(
             $amount: numeric
             $currency: String
             $description: String
+            $products: [products_insert_input!]!
           ) {
             insert_payments_one(
               object: {
@@ -26,6 +27,7 @@ export default withIronSessionApiRoute(
                 amount: $amount
                 currency: $currency
                 description: $description
+                products: { data: $products }
               }
             ) {
               id
@@ -38,6 +40,7 @@ export default withIronSessionApiRoute(
           currency: currency.code,
           amount,
           description,
+          products: products || [],
         },
       })
     ).data.insert_payments_one.id;

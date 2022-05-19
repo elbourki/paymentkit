@@ -11,6 +11,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import fetchJson, { FetchError } from "lib/fetch";
 import { theme } from "lib/shared";
 import useUser from "lib/auth";
+import Router from "next/router";
 
 const SingleValue = (props: SingleValueProps<any>) => (
   <>
@@ -62,10 +63,11 @@ const NewPayment: NextPageWithLayout = () => {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
     try {
-      await fetchJson("/api/payments/new", {
+      const payment = await fetchJson<{ id: string }>("/api/payments/new", {
         method: "POST",
         json: data,
       });
+      Router.push(`/app/payments/${payment.id}/collect`);
     } catch (error) {
       if (error instanceof FetchError) {
         setError("description", { message: error.data.message });

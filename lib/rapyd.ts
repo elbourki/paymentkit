@@ -60,6 +60,10 @@ class Rapyd {
     });
   }
 
+  getCheckout(id: string) {
+    return this.request<Response<RapydCheckout>>(`/v1/checkout/${id}`);
+  }
+
   getProducts(
     params: {
       limit?: number;

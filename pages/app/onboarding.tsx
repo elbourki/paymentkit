@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
 import rapyd from "public/assets/rapyd.png";
-import FormsLayout from "components/layouts/forms";
+import GuestLayout from "components/layouts/guest";
 import { NextPageWithLayout } from "typings/types";
 
 type FormValues = {
@@ -123,7 +123,7 @@ const OnBoarding: NextPageWithLayout = () => {
 };
 
 OnBoarding.getLayout = function getLayout(page) {
-  return <FormsLayout>{page}</FormsLayout>;
+  return <GuestLayout>{page}</GuestLayout>;
 };
 
 export default OnBoarding;

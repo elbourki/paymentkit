@@ -1,0 +1,22 @@
+[
+  {
+    "value": "bank_redirect",
+    "label": "Bank redirect"
+  },
+  {
+    "value": "bank_transfer",
+    "label": "Bank transfer"
+  },
+  {
+    "value": "card",
+    "label": "Credit card"
+  },
+  {
+    "value": "cash",
+    "label": "Cash"
+  },
+  {
+    "value": "ewallet",
+    "label": "Ewallet"
+  }
+]

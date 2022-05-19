@@ -42,6 +42,10 @@
   @apply animate-spin w-5 h-5 rounded-full border-2 border-r-black border-transparent;
 }
 
+.spinner-lg {
+  @apply w-10 h-10;
+}
+
 .btn.loading {
   @apply text-[0] leading-[0] align-top;
 }

@@ -1,21 +1,14 @@
-import classNames from "classnames";
 import AppLayout from "components/layouts/app";
-import useUser from "lib/auth";
+import classNames from "classnames";
 import fetchJson from "lib/fetch";
-import { useState } from "react";
+import useUser from "lib/auth";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import Select from "react-select";
 import { NextPageWithLayout } from "typings/types";
+import { styles, theme } from "lib/shared";
+import Select from "react-select";
+import { useState } from "react";
+import payment_methods_categories from "lib/data/payment_methods_categories.json";
 import currencies from "lib/data/currencies.json";
-import { theme } from "lib/shared";
-
-const payment_methods_categories = [
-  { value: "bank_redirect", label: "Bank redirect" },
-  { value: "bank_transfer", label: "Bank transfer" },
-  { value: "card", label: "Credit cards" },
-  { value: "cash", label: "Cash" },
-  { value: "ewallet", label: "Ewallet" },
-];
 
 type FormValues = {
   payment_methods_categories: string[];
@@ -81,34 +74,9 @@ const Settings: NextPageWithLayout = () => {
               isMulti={true}
               isSearchable={false}
               options={payment_methods_categories}
-              styles={{
-                control: (p, { isFocused }) => ({
-                  ...p,
-                  background: isFocused
-                    ? "#f0fdfa"
-                    : error
-                    ? "#fef2f2"
-                    : undefined,
-                  borderColor: isFocused
-                    ? "#14b8a6"
-                    : error
-                    ? "#fecaca"
-                    : "#e5e7eb",
-                  borderWidth: "2px",
-                  fontSize: "0.875rem",
-                  boxShadow: "none",
-                  transition: "border-color 150ms 100ms",
-                  borderRadius: "0.375rem",
-                  ":hover": {
-                    borderColor: isFocused ? "#14b8a6" : "#e5e7eb",
-                  },
-                }),
-                option: (p) => ({
-                  ...p,
-                  fontWeight: "500",
-                  fontSize: "0.875rem",
-                }),
-              }}
+              styles={styles<typeof payment_methods_categories[number], true>(
+                error
+              )}
               theme={theme}
             />
           </label>
@@ -131,39 +99,7 @@ const Settings: NextPageWithLayout = () => {
               value={currencies.find((c) => c.code === field.value)}
               isMulti={false}
               options={currencies}
-              styles={{
-                control: (p, { isFocused }) => ({
-                  ...p,
-                  background: isFocused
-                    ? "#f0fdfa"
-                    : error
-                    ? "#fef2f2"
-                    : undefined,
-                  borderColor: isFocused
-                    ? "#14b8a6"
-                    : error
-                    ? "#fecaca"
-                    : "#e5e7eb",
-                  borderWidth: "2px",
-                  fontSize: "0.875rem",
-                  boxShadow: "none",
-                  transition: "border-color 150ms 100ms",
-                  ":hover": {
-                    borderColor: isFocused ? "#14b8a6" : "#e5e7eb",
-                  },
-                }),
-                option: (p) => ({
-                  ...p,
-                  fontWeight: "500",
-                  fontSize: "0.875rem",
-                }),
-                input: (p) => ({
-                  ...p,
-                  input: {
-                    boxShadow: "none !important",
-                  },
-                }),
-              }}
+              styles={styles<typeof currencies[number], false>(error)}
               theme={theme}
               getOptionValue={(option) => option?.code || ""}
               getOptionLabel={(option) =>

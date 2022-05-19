@@ -1,6 +1,7 @@
-import { ThemeConfig } from "react-select";
+import { StylesConfig, ThemeConfig } from "react-select";
 import { formatValue } from "react-currency-input-field";
 import currencies from "lib/data/currencies.json";
+import { FieldError } from "react-hook-form";
 
 export const theme: ThemeConfig = (theme) => ({
   ...theme,
@@ -11,6 +12,34 @@ export const theme: ThemeConfig = (theme) => ({
     primary50: "#ccfbf1",
     primary25: "#f0fdfa",
   },
+});
+
+export const styles = <T, M extends boolean>(
+  error: FieldError | undefined
+): StylesConfig<T, M> => ({
+  control: (p, { isFocused }) => ({
+    ...p,
+    background: isFocused ? "#f0fdfa" : error ? "#fef2f2" : undefined,
+    borderColor: isFocused ? "#14b8a6" : error ? "#fecaca" : "#e5e7eb",
+    borderWidth: "2px",
+    fontSize: "0.875rem",
+    boxShadow: "none",
+    transition: "border-color 150ms 100ms",
+    ":hover": {
+      borderColor: isFocused ? "#14b8a6" : "#e5e7eb",
+    },
+  }),
+  option: (p) => ({
+    ...p,
+    fontWeight: "500",
+    fontSize: "0.875rem",
+  }),
+  input: (p) => ({
+    ...p,
+    input: {
+      boxShadow: "none !important",
+    },
+  }),
 });
 
 export const amount = (amount: number, currency_code: string) => {

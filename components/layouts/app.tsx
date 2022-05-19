@@ -70,7 +70,7 @@ const TopBar: React.FC<{
           <Menu.Button>
             <MajesticonsUserLine />
           </Menu.Button>
-          <Menu.Items className="absolute right-0 md:right-auto md:left-0 mt-8 w-44 origin-top-left rounded-md bg-white border-2">
+          <Menu.Items className="absolute right-0 md:right-auto md:left-0 mt-8 w-44 origin-top-left rounded-md bg-white border-2 z-50">
             <div className="px-1 py-1">
               <Menu.Item>
                 {({ active }) => (

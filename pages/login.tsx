@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import Input from "components/input";
-import FormsLayout from "components/layouts/forms";
+import GuestLayout from "components/layouts/guest";
 import useUser from "lib/auth";
 import fetchJson, { FetchError } from "lib/fetch";
 import { Magic } from "magic-sdk";
@@ -95,7 +95,7 @@ const Login: NextPageWithLayout = () => {
 };
 
 Login.getLayout = function getLayout(page) {
-  return <FormsLayout>{page}</FormsLayout>;
+  return <GuestLayout>{page}</GuestLayout>;
 };
 
 export default Login;

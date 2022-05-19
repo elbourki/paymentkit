@@ -14,6 +14,7 @@ import MajesticonsPlusCircleLine from "~icons/majesticons/plus-circle-line";
 import MajesticonsMinusCircleLine from "~icons/majesticons/minus-circle-line";
 import MajesticonsInboxLine from "~icons/majesticons/inbox-line";
 import defaultProductImage from "public/assets/product-default-image.png";
+import Router from "next/router";
 
 const Product: React.FC<{
   product: any;
@@ -101,10 +102,14 @@ const Products: NextPageWithLayout = () => {
   const [loading, setLoading] = useState(false);
 
   const skus = (products || []).map(({ skus }) => skus).flat();
-  const items = Array.from(basket).map(([sku_id, quantity]) => ({
-    sku: skus.find(({ id }) => id === sku_id),
-    quantity,
-  }));
+  const items = Array.from(basket).map(([sku_id, quantity]) => {
+    const sku = skus.find(({ id }) => id === sku_id);
+    return {
+      sku,
+      product: products?.find(({ id }) => id === sku.product),
+      quantity,
+    };
+  });
   const total = items.reduce(
     (total, item) => total + item.quantity * item.sku.price,
     0
@@ -133,6 +138,24 @@ const Products: NextPageWithLayout = () => {
 
   const createPayment = async () => {
     setLoading(true);
+    const payment = await fetchJson<{ id: string }>("/api/payments/new", {
+      method: "POST",
+      json: {
+        amount: total,
+        currency: {
+          code: currency,
+        },
+        products: items.map((item) => ({
+          quantity: item.quantity,
+          name: item.product.name,
+          image: item.product.images[0],
+          amount: item.sku.price,
+          sku_id: item.sku.id,
+          product_id: item.sku.product,
+        })),
+      },
+    });
+    Router.push(`/app/payments/${payment.id}/collect`);
   };
 
   useEffect(() => {

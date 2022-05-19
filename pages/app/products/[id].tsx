@@ -1,7 +1,7 @@
 import AppLayout from "components/layouts/app";
 import { withIronSessionSsr } from "iron-session/next";
 import useUser, { sessionOptions } from "lib/auth";
-import { theme } from "lib/shared";
+import { styles, theme } from "lib/shared";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Select from "react-select";
 import { NextPageWithLayout } from "typings/types";
@@ -45,8 +45,6 @@ const NewProduct: NextPageWithLayout<{ product: any }> = ({ product }) => {
   const currency =
     currencies.find(({ code }) => code === currency_code) || currencies[0];
 
-  console.log(product);
-
   const changeImage = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return setValue("image", "");
     const reader = new FileReader();
@@ -58,7 +56,6 @@ const NewProduct: NextPageWithLayout<{ product: any }> = ({ product }) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
-    console.log(data);
     try {
       if (product.id === "new")
         await fetchJson("/api/products/create", {
@@ -111,40 +108,7 @@ const NewProduct: NextPageWithLayout<{ product: any }> = ({ product }) => {
               value={currencies.find((c) => c.code === field.value)}
               isMulti={false}
               options={currencies}
-              styles={{
-                control: (p, { isFocused }) => ({
-                  ...p,
-                  background: isFocused
-                    ? "#f0fdfa"
-                    : error
-                    ? "#fef2f2"
-                    : undefined,
-                  borderColor: isFocused
-                    ? "#14b8a6"
-                    : error
-                    ? "#fecaca"
-                    : "#e5e7eb",
-                  borderWidth: "2px",
-                  fontSize: "0.875rem",
-                  boxShadow: "none",
-                  transition: "border-color 150ms 100ms",
-                  minHeight: "44px",
-                  ":hover": {
-                    borderColor: isFocused ? "#14b8a6" : "#e5e7eb",
-                  },
-                }),
-                option: (p) => ({
-                  ...p,
-                  fontWeight: "500",
-                  fontSize: "0.875rem",
-                }),
-                input: (p) => ({
-                  ...p,
-                  input: {
-                    boxShadow: "none !important",
-                  },
-                }),
-              }}
+              styles={styles<typeof currencies[number], false>(error)}
               theme={theme}
               getOptionValue={(option) => option?.code || ""}
               getOptionLabel={(option) =>
