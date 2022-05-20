@@ -10,18 +10,22 @@ import defaultProductImage from "public/assets/product-default-image.png";
 import { RapydPayment } from "components/payments/rapyd";
 import Link from "next/link";
 import Script from "next/script";
+import Head from "next/head";
 
 const Pay: NextPageWithLayout<{ payment: any; country: string }> = ({
   payment,
   country,
 }) => {
+  const formatted = amount(payment.amount, payment.currency);
+
   return (
     <>
+      <Head>
+        <title>Pay {formatted}</title>
+      </Head>
       <div className="bg-white w-full max-w-md border-2 border-gray-100 rounded-md">
         <div className="text-center border-b-2 border-gray-100 p-6">
-          <h3 className="font-bold mb-2 text-2xl">
-            {amount(payment.amount, payment.currency)}
-          </h3>
+          <h3 className="font-bold mb-2 text-2xl">{formatted}</h3>
           <p className="text-sm text-gray-500 font-medium">
             {payment.description ||
               `${payment.products.length} ${pluralize(

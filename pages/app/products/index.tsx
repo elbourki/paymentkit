@@ -191,7 +191,7 @@ const Products: NextPageWithLayout = () => {
       ) : (
         <div className="flex-grow flex flex-col items-center justify-center">
           <MajesticonsInboxLine fontSize={30} />
-          <span className="font-medium mt-4">
+          <span className="mt-4 text-sm font-semibold">
             You haven&apos;t added any products yet
           </span>
         </div>

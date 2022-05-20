@@ -2,21 +2,20 @@ import { gql, useSubscription } from "@apollo/client";
 import { RadioGroup } from "@headlessui/react";
 import classNames from "classnames";
 import AppLayout from "components/layouts/app";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import { useState } from "react";
 import { NextPageWithLayout } from "typings/types";
 import MajesticonsLinkLine from "~icons/majesticons/link-line";
 import MajesticonsCreditcardHandLine from "~icons/majesticons/creditcard-hand-line";
 import MajesticonsQrCodeLine from "~icons/majesticons/qr-code-line";
 import MajesticonsArrowLeftLine from "~icons/majesticons/arrow-left-line";
-import { formatValue } from "react-currency-input-field";
-import currencies from "lib/data/currencies.json";
 import { PaymentLink } from "components/payments/link";
 import { PaymentQR } from "components/payments/qr";
 import { ManualPayment } from "components/payments/manual";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions, User } from "lib/auth";
 import Script from "next/script";
+import { amount } from "lib/shared";
 
 const options = [
   {
@@ -46,7 +45,7 @@ const Collect: NextPageWithLayout<{ user: User }> = (props) => {
   const {
     query: { id },
   } = useRouter();
-  const { loading, data } = useSubscription(
+  const { loading, data, error } = useSubscription(
     gql`
       subscription ($id: uuid!) {
         payments_by_pk(id: $id) {
@@ -71,18 +70,23 @@ const Collect: NextPageWithLayout<{ user: User }> = (props) => {
     return (
       <div className="flex justify-center items-center flex-col flex-grow">
         <div className="animate-spin spinner" />
-        <h3 className="mt-4 text-sm font-semibold">Please wait</h3>
+        <h3 className="mt-4 text-sm font-semibold">Loading...</h3>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex justify-center items-center flex-col flex-grow">
+        <h3 className="mt-4 text-sm font-semibold">Something went wrong</h3>
       </div>
     );
 
   const payment = data.payments_by_pk;
-  const currency =
-    currencies.find((currency) => currency.code === payment.currency) ||
-    currencies[0];
   const option = options.find(({ type }) => type === selected) || options[0];
 
   const back = () => {
     if (confirmed) setConfirmed(false);
+    else Router.push(`/app/payments/${payment.id}`);
   };
 
   return (
@@ -96,11 +100,7 @@ const Collect: NextPageWithLayout<{ user: User }> = (props) => {
           Back
         </button>
         <h1 className="font-bold text-2xl">
-          {formatValue({
-            value: payment.amount.toString(),
-            decimalScale: currency.digits_after_decimal_separator,
-            intlConfig: { locale: "en-US", currency: currency.code },
-          })}
+          {amount(payment.amount, payment.currency)}
         </h1>
       </div>
       {confirmed ? (
