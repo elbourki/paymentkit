@@ -44,7 +44,7 @@ interface RapydProduct {
   images: string[];
   type: "goods" | "services";
   metadata?: {
-    [k: string]: string;
+    [k: string]: any;
   };
   [k: string]: any;
 }
@@ -60,7 +60,7 @@ interface RapydSKU {
   price: number;
   product: string;
   metadata?: {
-    [k: string]: string;
+    [k: string]: any;
   };
   [k: string]: any;
 }
@@ -75,7 +75,7 @@ interface RapydCheckout {
   fixed_side: "sell" | "buy";
   requested_currency: string;
   metadata?: {
-    [k: string]: string;
+    [k: string]: any;
   };
   [k: string]: any;
 }

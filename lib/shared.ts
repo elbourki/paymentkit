@@ -2,6 +2,13 @@ import { StylesConfig, ThemeConfig } from "react-select";
 import { formatValue } from "react-currency-input-field";
 import currencies from "lib/data/currencies.json";
 import { FieldError } from "react-hook-form";
+import MajesticonsCreditcardHandLine from "~icons/majesticons/creditcard-hand-line";
+import MajesticonsCreditCardLine from "~icons/majesticons/credit-card-line";
+import MajesticonsCashLine from "~icons/majesticons/cash-line";
+import MajesticonsSortHorizontalLine from "~icons/majesticons/sort-horizontal-line";
+import MajesticonsLibraryLine from "~icons/majesticons/library-line";
+import MajesticonsIphoneXAppsLine from "~icons/majesticons/iphone-x-apps-line";
+import MajesticonsClockLine from "~icons/majesticons/clock-line";
 
 export const theme: ThemeConfig = (theme) => ({
   ...theme,
@@ -49,4 +56,14 @@ export const amount = (amount: number, currency_code: string) => {
     decimalScale: currency?.digits_after_decimal_separator || 2,
     intlConfig: { locale: "en-US", currency: currency?.code || currency_code },
   });
+};
+
+export const icon_mapping: { [k: string]: typeof MajesticonsClockLine } = {
+  manual: MajesticonsCreditcardHandLine,
+  card: MajesticonsCreditCardLine,
+  cash: MajesticonsCashLine,
+  ewallet: MajesticonsIphoneXAppsLine,
+  bank_redirect: MajesticonsLibraryLine,
+  bank_transfer: MajesticonsSortHorizontalLine,
+  unpaid: MajesticonsClockLine,
 };

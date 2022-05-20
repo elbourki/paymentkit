@@ -2,30 +2,14 @@ import { useSubscription, gql } from "@apollo/client";
 import { NextPageWithLayout } from "typings/types";
 import AppLayout from "components/layouts/app";
 import MajesticonsInboxLine from "~icons/majesticons/inbox-line";
-import MajesticonsCreditcardHandLine from "~icons/majesticons/creditcard-hand-line";
-import MajesticonsCreditCardLine from "~icons/majesticons/credit-card-line";
-import MajesticonsCashLine from "~icons/majesticons/cash-line";
-import MajesticonsSortHorizontalLine from "~icons/majesticons/sort-horizontal-line";
-import MajesticonsLibraryLine from "~icons/majesticons/library-line";
-import MajesticonsIphoneXAppsLine from "~icons/majesticons/iphone-x-apps-line";
-import MajesticonsClockLine from "~icons/majesticons/clock-line";
-import { amount } from "lib/shared";
+import { amount, icon_mapping } from "lib/shared";
 import Link from "next/link";
 import pluralize from "pluralize";
-
-const icon_mapping: { [k: string]: typeof MajesticonsClockLine } = {
-  manual: MajesticonsCreditcardHandLine,
-  card: MajesticonsCreditCardLine,
-  cash: MajesticonsCashLine,
-  ewallet: MajesticonsIphoneXAppsLine,
-  bank_redirect: MajesticonsLibraryLine,
-  bank_transfer: MajesticonsSortHorizontalLine,
-};
 
 const Payment: React.FC<{
   payment: any;
 }> = ({ payment }) => {
-  const Icon = icon_mapping[payment.paid_via] || MajesticonsClockLine;
+  const Icon = icon_mapping[payment.paid_via] || icon_mapping["unpaid"];
   const products_count = payment.products_aggregate.aggregate.count;
 
   return (
@@ -63,7 +47,7 @@ const Payments: NextPageWithLayout = () => {
   const { loading, error, data } = useSubscription(
     gql`
       subscription {
-        payments {
+        payments(order_by: { created_at: desc }) {
           id
           amount
           currency

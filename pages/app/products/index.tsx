@@ -1,4 +1,4 @@
-import { NextPageWithLayout } from "typings/types";
+import { NextPageWithLayout, RapydProduct } from "typings/types";
 import { useEffect, useState } from "react";
 import AppLayout from "components/layouts/app";
 import { useMap } from "usehooks-ts";
@@ -96,7 +96,7 @@ const Product: React.FC<{
 };
 
 const Products: NextPageWithLayout = () => {
-  const { data: products, mutate } = useSWR<any[]>("/api/products");
+  const { data: products, mutate } = useSWR<RapydProduct[]>("/api/products");
   const [basket, actions] = useMap<string, number>([]);
   const [currency, setCurrency] = useState<string>();
   const [loading, setLoading] = useState(false);
@@ -147,8 +147,8 @@ const Products: NextPageWithLayout = () => {
         },
         products: items.map((item) => ({
           quantity: item.quantity,
-          name: item.product.name,
-          image: item.product.images[0],
+          name: item.product?.name,
+          image: item.product?.images[0],
           amount: item.sku.price,
           sku_id: item.sku.id,
           product_id: item.sku.product,

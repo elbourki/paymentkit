@@ -1,7 +1,7 @@
 import fetchJson from "lib/fetch";
 import { useState, useEffect, useCallback } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { styles, theme } from "lib/shared";
+import { amount, styles, theme } from "lib/shared";
 import { useMap } from "usehooks-ts";
 import classNames from "classnames";
 import Select from "react-select";
@@ -10,40 +10,49 @@ import currencies from "lib/data/currencies.json";
 import payment_methods_categories from "lib/data/payment_methods_categories.json";
 import MajesticonsCheckCircleLine from "~icons/majesticons/check-circle-line";
 import MajesticonsExclamationCircleLine from "~icons/majesticons/exclamation-circle-line";
+import Input from "components/input";
+import { RadioGroup } from "@headlessui/react";
+
+const tip_options = [0, 15, 20, 25];
 
 type FormValues = {
   country: string;
   currency?: string;
   payment_category?: string;
+  tip: number;
 };
 
 export const RapydPayment: React.FC<{
-  payment_id: string;
+  payment: any;
   card?: boolean;
   default_country?: string;
-  payment_status: "pending" | "paid" | "unpaid";
-}> = ({ payment_id, card, default_country, payment_status }) => {
+  tips: boolean;
+}> = ({ payment, card, default_country, tips }) => {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<
     "error" | "verifying" | "pending" | "paid" | "unpaid"
-  >(payment_status);
+  >(payment.status);
   const [checkoutId, setCheckoutId] = useState<string>();
   const [loadingOptions, setLoadingOptions] = useState(false);
   const [options, actions] = useMap<string, string[]>([]);
   const {
     handleSubmit,
-    formState: { isValid },
+    formState: { isValid, errors },
     control,
     watch,
+    register,
     setValue,
   } = useForm<FormValues>({
     defaultValues: {
       country: default_country,
+      tip: 0,
     },
     mode: "onChange",
   });
+  const [selected, setSelected] = useState<number | undefined>(0);
   const country = watch("country");
   const currency = watch("currency");
+  const tip = watch("tip");
 
   useEffect(() => {
     (async () => {
@@ -54,7 +63,7 @@ export const RapydPayment: React.FC<{
         "/api/options",
         {
           method: "POST",
-          json: { id: payment_id, country, card },
+          json: { id: payment.id, country, card },
         }
       );
       actions.setAll(Object.entries(options));
@@ -92,14 +101,14 @@ export const RapydPayment: React.FC<{
         complete_payment_url: string;
       }>("/api/payments/verify", {
         method: "POST",
-        json: { id: payment_id, checkoutId, card },
+        json: { id: payment.id, checkoutId, card },
       });
       if (status === "pending") window.location.href = complete_payment_url;
       setStatus(status);
     } catch (e) {
       paymentError(e);
     }
-  }, [card, checkoutId, payment_id]);
+  }, [card, checkoutId, payment.id]);
 
   useEffect(() => {
     window.addEventListener("onCheckoutPaymentSuccess", verifyPayment);
@@ -117,13 +126,18 @@ export const RapydPayment: React.FC<{
       {
         method: "POST",
         json: {
-          id: payment_id,
+          id: payment.id,
           ...data,
           payment_category: card ? "card" : data.payment_category,
         },
       }
     );
     setCheckoutId(checkout.id);
+  };
+
+  const changeTip = (v: number | undefined) => {
+    setSelected(v);
+    if (v !== undefined) setValue("tip", v);
   };
 
   if (status === "verifying")
@@ -255,6 +269,63 @@ export const RapydPayment: React.FC<{
             </label>
           )}
         />
+      )}
+      {tips && (
+        <div>
+          <RadioGroup className="mb-3" value={selected} onChange={changeTip}>
+            <RadioGroup.Label className="block font-medium text-sm">
+              Add a tip (
+              {amount(((tip || 0) / 100) * payment.amount, payment.currency)})
+            </RadioGroup.Label>
+            <div className="flex gap-3 mt-1">
+              {tip_options.map((option) => (
+                <RadioGroup.Option
+                  key={option}
+                  value={option}
+                  className={({ checked }) =>
+                    classNames(
+                      "text-sm font-medium border-2 rounded-md py-2 px-3 cursor-pointer",
+                      {
+                        "bg-teal-600 text-white border-teal-600": checked,
+                      }
+                    )
+                  }
+                >
+                  {option ? `${option}%` : "No Tip"}
+                </RadioGroup.Option>
+              ))}
+              <RadioGroup.Option
+                value={undefined}
+                className={({ checked }) =>
+                  classNames(
+                    "text-sm font-medium border-2 rounded-md py-2 px-3 cursor-pointer",
+                    {
+                      "bg-teal-600 text-white border-teal-600": checked,
+                    }
+                  )
+                }
+              >
+                Custom
+              </RadioGroup.Option>
+            </div>
+          </RadioGroup>
+          <Input
+            id="tip"
+            className={classNames({
+              hidden: selected !== undefined,
+            })}
+            placeholder="Custom tip"
+            register={register}
+            errors={errors}
+            type="number"
+            validation={{
+              required: true,
+              valueAsNumber: true,
+              min: 0,
+              max: 100,
+            }}
+          />
+        </div>
       )}
       <button
         className={classNames("btn mt-auto", { loading })}

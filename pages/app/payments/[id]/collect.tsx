@@ -112,10 +112,10 @@ const Collect: NextPageWithLayout<{ user: User }> = (props) => {
               Payment option
             </RadioGroup.Label>
             <div className="space-y-2 mt-2">
-              {options.map((plan) => (
+              {options.map((option) => (
                 <RadioGroup.Option
-                  key={plan.type}
-                  value={plan.type}
+                  key={option.type}
+                  value={option.type}
                   className={({ checked }) =>
                     classNames(
                       "relative flex items-center gap-4 cursor-pointer rounded-lg px-5 py-4 border-2 focus:outline-none",
@@ -127,7 +127,7 @@ const Collect: NextPageWithLayout<{ user: User }> = (props) => {
                 >
                   {({ checked }) => (
                     <>
-                      <plan.icon className="flex-shrink-0" fontSize={25} />
+                      <option.icon className="flex-shrink-0" fontSize={25} />
                       <div className="text-sm">
                         <RadioGroup.Label
                           as="p"
@@ -135,7 +135,7 @@ const Collect: NextPageWithLayout<{ user: User }> = (props) => {
                             "text-white": checked,
                           })}
                         >
-                          {plan.name}
+                          {option.name}
                         </RadioGroup.Label>
                         <RadioGroup.Description
                           as="span"
@@ -144,7 +144,7 @@ const Collect: NextPageWithLayout<{ user: User }> = (props) => {
                             checked ? "text-sky-100" : "text-gray-500"
                           )}
                         >
-                          <span>{plan.description}</span>
+                          <span>{option.description}</span>
                         </RadioGroup.Description>
                       </div>
                     </>

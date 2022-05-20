@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { sessionOptions, User } from "lib/auth";
-import { client } from "lib/graphql";
+import { client, hasura_jwt } from "lib/graphql";
 import Rapyd from "lib/rapyd";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -58,6 +58,10 @@ export default withIronSessionApiRoute(
         variables: { id: req.session.user.id, account_id: account.id },
       });
       req.session.user.account = account;
+      req.session.user.hasura_token = hasura_jwt(
+        req.session.user.id,
+        account.id
+      );
       await req.session.save();
       res.json(req.session.user);
     } catch (error) {

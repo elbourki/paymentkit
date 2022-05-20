@@ -2,10 +2,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { sessionOptions, User } from "lib/auth";
 import { magic } from "lib/magic";
-import { client } from "lib/graphql";
+import { client, hasura_jwt } from "lib/graphql";
 import { gql } from "@apollo/client";
-import jwt from "jsonwebtoken";
 import { knock } from "lib/knock";
+import jwt from "jsonwebtoken";
 
 export default withIronSessionApiRoute(
   async (
@@ -46,16 +46,7 @@ export default withIronSessionApiRoute(
           },
         })
       ).data.insert_users_one;
-      const hasura_token = jwt.sign(
-        {
-          "https://hasura.io/jwt/claims": {
-            "x-hasura-allowed-roles": ["user"],
-            "x-hasura-default-role": "user",
-            "x-hasura-user-id": user.id,
-          },
-        },
-        process.env.HASURA_JWT_SECRET || ""
-      );
+      const hasura_token = hasura_jwt(user.id, user.account?.id);
       await knock.users.identify(user.id, {
         email: user.email,
       });

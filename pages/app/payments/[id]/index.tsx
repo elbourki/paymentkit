@@ -35,6 +35,7 @@ const Collect: NextPageWithLayout = () => {
             quantity
           }
           paid_via
+          tip_amount
           status
           created_at
         }
@@ -104,14 +105,18 @@ const Collect: NextPageWithLayout = () => {
           <div className="flex justify-between text-sm font-medium p-3">
             <span>Paid via</span>
             <span>
-              {
-                payment_methods_categories.find(
-                  ({ value }) => value === payment.paid_via
-                )?.label
-              }
+              {payment_methods_categories.find(
+                ({ value }) => value === payment.paid_via
+              )?.label || "Manual payment"}
             </span>
           </div>
         )}
+        {payment.tip_amount ? (
+          <div className="flex justify-between text-sm font-medium p-3">
+            <span>Tip amount</span>
+            <span>{amount(payment.tip_amount, payment.currency)}</span>
+          </div>
+        ) : null}
       </div>
       {payment.products.length ? (
         <div className="border-2 rounded-md flex flex-col divide-y-2">

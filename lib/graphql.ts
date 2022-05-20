@@ -1,4 +1,5 @@
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import jwt from "jsonwebtoken";
 
 export const client = new ApolloClient({
   link: new HttpLink({
@@ -19,3 +20,16 @@ export const client = new ApolloClient({
     },
   },
 });
+
+export const hasura_jwt = (user_id: string, account_id?: string) =>
+  jwt.sign(
+    {
+      "https://hasura.io/jwt/claims": {
+        "x-hasura-allowed-roles": ["user"],
+        "x-hasura-default-role": "user",
+        "x-hasura-user-id": user_id,
+        "x-hasura-account-id": account_id,
+      },
+    },
+    process.env.HASURA_JWT_SECRET || ""
+  );

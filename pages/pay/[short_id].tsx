@@ -58,9 +58,9 @@ const Pay: NextPageWithLayout<{ payment: any; country: string }> = ({
         )}
         <div className="p-6">
           <RapydPayment
-            payment_id={payment.id}
-            payment_status={payment.status}
+            payment={payment}
             default_country={country}
+            tips={payment.account.allow_tips}
           />
         </div>
       </div>
@@ -105,6 +105,7 @@ export const getServerSideProps: GetServerSideProps = async ({
               quantity
             }
             account {
+              allow_tips
               sandbox
             }
           }

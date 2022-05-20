@@ -189,7 +189,7 @@ const AppLayout: React.FC<{ children: JSX.Element }> = ({ children }) => {
           <div className="flex-grow flex flex-col">
             <TopBar className="md:hidden" mutateUser={mutateUser} />
             {children}
-            <div className="md:hidden flex justify-around p-6 sticky bottom-0 w-full backdrop-blur bg-white/50 mt-auto">
+            <div className="md:hidden flex justify-around p-6 sticky bottom-0 w-full backdrop-blur bg-white/25 mt-auto">
               {links.map((link) => (
                 <Link key={link.link} href={link.link}>
                   <a
