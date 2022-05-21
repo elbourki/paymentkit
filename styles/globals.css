@@ -7,6 +7,15 @@
 :root {
   --rnf-notification-feed-popover-shadow: none !important;
   --rnf-notification-feed-popover-border-radius: 0.375rem !important;
+  --app-height: 100vh;
+}
+
+body {
+  overscroll-behavior-y: contain;
+}
+
+.min-h-screen {
+  min-height: var(--app-height);
 }
 
 .rnf-notification-feed-popover__inner {

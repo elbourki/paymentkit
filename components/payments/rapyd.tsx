@@ -277,7 +277,7 @@ export const RapydPayment: React.FC<{
               Add a tip (
               {amount(((tip || 0) / 100) * payment.amount, payment.currency)})
             </RadioGroup.Label>
-            <div className="flex gap-3 mt-1">
+            <div className="flex flex-wrap gap-3 mt-1">
               {tip_options.map((option) => (
                 <RadioGroup.Option
                   key={option}
