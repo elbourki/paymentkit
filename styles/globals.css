@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('@knocklabs/react-notification-feed/dist/index.css');
+@import url("@knocklabs/react-notification-feed/dist/index.css");
 
 :root {
   --rnf-notification-feed-popover-shadow: none !important;
@@ -19,13 +19,30 @@ body {
 }
 
 .rnf-notification-feed-popover__inner {
-  @apply border-2; 
+  @apply border-2;
 }
 
-.background {
-  @apply inset-0 absolute -z-[1];
-  background:
-    radial-gradient(circle at top left, #ede9fe, rgba(255, 255, 255, 0) 15%), radial-gradient(circle at 80% 20%, #d8f3f6, rgba(255, 255, 255, 0) 15%)
+.bg-gradient {
+  background: radial-gradient(
+      22.84% 40.6% at 42.6% 19.91%,
+      rgba(250, 255, 0, 0.087) 0%,
+      rgba(250, 255, 0, 0) 100%
+    ),
+    linear-gradient(
+      291deg,
+      rgba(255, 90, 219, 0.2) 0%,
+      rgba(255, 90, 219, 0) 68.71%
+    ),
+    radial-gradient(
+      32.81% 58.33% at 28.7% 100%,
+      rgba(78, 49, 255, 0.2) 0%,
+      rgba(0, 56, 255, 0) 100%
+    ),
+    radial-gradient(
+      74.95% 133.24% at 0% 0%,
+      rgba(45, 212, 191, 0.35) 0%,
+      rgba(153, 246, 228, 0) 100%
+    );
 }
 
 @media screen(md) {
@@ -64,18 +81,20 @@ body {
   @apply animate-spin w-5 h-5 rounded-full border-2 border-r-white border-transparent my-2.5 mx-auto block;
 }
 
-input[type=file]::file-selector-button {
+input[type="file"]::file-selector-button {
   @apply bg-gray-100;
   -webkit-margin-start: -1rem;
   -webkit-margin-end: 1rem;
   border: 0;
   color: black;
   cursor: pointer;
-  font-size: .875rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  margin-inline-end:1rem;margin-inline-start:-1rem;padding: .625rem 1rem .625rem 2rem
+  margin-inline-end: 1rem;
+  margin-inline-start: -1rem;
+  padding: 0.625rem 1rem 0.625rem 2rem;
 }
 
-[type='file']:focus {
+[type="file"]:focus {
   @apply outline-none;
 }

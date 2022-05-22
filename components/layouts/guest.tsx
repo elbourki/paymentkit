@@ -6,12 +6,14 @@ const GuestLayout: React.FC<{
 }> = ({ children, col }) => {
   return (
     <div
-      className={classNames("min-h-screen flex items-center p-6 relative", {
-        "flex-col justify-between gap-6": col,
-        "justify-center": !col,
-      })}
+      className={classNames(
+        "min-h-screen bg-gradient flex items-center p-6 relative",
+        {
+          "flex-col justify-between gap-6": col,
+          "justify-center": !col,
+        }
+      )}
     >
-      <div className="background"></div>
       {children}
     </div>
   );

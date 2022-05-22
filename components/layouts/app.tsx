@@ -153,7 +153,6 @@ const AppLayout: React.FC<{ children: JSX.Element }> = ({ children }) => {
   if (!user?.account || !client)
     return (
       <div className="flex justify-center items-center flex-col min-h-screen relative">
-        <div className="background"></div>
         <div className="animate-spin spinner" />
         <h3 className="mt-4 text-sm font-semibold">Please wait</h3>
       </div>
