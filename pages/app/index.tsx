@@ -49,6 +49,8 @@ const Product: React.FC<{
 }> = ({ product }) => {
   const sku = product.skus.at(0);
 
+  if (!sku) return <></>;
+
   return (
     <div className="p-3 flex items-center gap-3">
       <Image

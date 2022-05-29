@@ -8,7 +8,7 @@ import { NextPageWithLayout } from "typings/types";
 import currencies from "lib/data/currencies.json";
 import classNames from "classnames";
 import { ChangeEvent, useEffect, useState } from "react";
-import fetchJson from "lib/fetch";
+import fetchJson, { FetchError } from "lib/fetch";
 import Input from "components/input";
 import CurrencyInput, { formatValue } from "react-currency-input-field";
 import Rapyd from "lib/rapyd";
@@ -32,6 +32,7 @@ const NewProduct: NextPageWithLayout<{ product: any }> = ({ product }) => {
     control,
     watch,
     setValue,
+    setError,
   } = useForm<FormValues>({
     defaultValues: {
       name: product.name,
@@ -67,11 +68,15 @@ const NewProduct: NextPageWithLayout<{ product: any }> = ({ product }) => {
           method: "POST",
           json: { id: product.id, ...data },
         });
+      await mutate("/api/products");
+      await Router.push("/app/products");
     } catch (error) {
-      console.error(error);
+      if (error instanceof FetchError) {
+        setError("name", { message: error.data.message });
+      } else {
+        console.error(error);
+      }
     }
-    await mutate("/api/products");
-    Router.push("/app/products");
     setLoading(false);
   };
 
@@ -181,8 +186,7 @@ export const getServerSideProps = withIronSessionSsr(async function ({
       product: {
         id,
         name: product.name,
-        currency: sku.currency,
-        price: sku.price,
+        ...(sku ? { currency: sku.currency, price: sku.price } : {}),
       },
     },
   };

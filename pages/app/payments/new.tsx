@@ -67,7 +67,7 @@ const NewPayment: NextPageWithLayout = () => {
         method: "POST",
         json: data,
       });
-      Router.push(`/app/payments/${payment.id}/collect`);
+      await Router.push(`/app/payments/${payment.id}/collect`);
     } catch (error) {
       if (error instanceof FetchError) {
         setError("description", { message: error.data.message });

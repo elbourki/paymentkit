@@ -16,14 +16,22 @@ export default withIronSessionApiRoute(
         service: "paymentkit",
       },
     });
-    await rapyd.createSKU({
-      product: product.id,
-      currency,
-      price,
-      inventory: {
-        type: "infinite",
-      },
-    });
+    try {
+      await rapyd.createSKU({
+        product: product.id,
+        currency,
+        price,
+        inventory: {
+          type: "infinite",
+        },
+      });
+    } catch (error) {
+      await rapyd.deleteProduct(product.id);
+      res.status(400).json({
+        message: "Please contact Rapyd's support to activate the SKUs endpoint",
+      });
+      console.error(error);
+    }
     res.status(200).send({});
   },
   sessionOptions

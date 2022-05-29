@@ -43,10 +43,19 @@ const checkout = async (
   const status = checkout.payment.status === "CLO" ? "paid" : "pending";
   await client.mutate({
     mutation: gql`
-      mutation ($id: uuid!, $paid_via: String, $tip_amount: numeric) {
+      mutation (
+        $id: uuid!
+        $status: String
+        $paid_via: String
+        $tip_amount: numeric
+      ) {
         update_payments_by_pk(
           pk_columns: { id: $id }
-          _set: { status: "paid", paid_via: $paid_via, tip_amount: $tip_amount }
+          _set: {
+            status: $status
+            paid_via: $paid_via
+            tip_amount: $tip_amount
+          }
         ) {
           id
         }

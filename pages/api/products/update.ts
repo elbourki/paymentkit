@@ -11,7 +11,7 @@ export default withIronSessionApiRoute(
     const { data: product } = await rapyd.updateProduct(id, {
       name,
     });
-    const sku = await rapyd.updateSKU(product.skus[0].id, {
+    await rapyd.updateSKU(product.skus[0].id, {
       currency,
       price,
     });

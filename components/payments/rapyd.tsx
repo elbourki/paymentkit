@@ -9,6 +9,7 @@ import countries from "lib/data/countries.json";
 import currencies from "lib/data/currencies.json";
 import payment_methods_categories from "lib/data/payment_methods_categories.json";
 import MajesticonsCheckCircleLine from "~icons/majesticons/check-circle-line";
+import MajesticonsClockLine from "~icons/majesticons/clock-line";
 import MajesticonsExclamationCircleLine from "~icons/majesticons/exclamation-circle-line";
 import Input from "components/input";
 import { RadioGroup } from "@headlessui/react";
@@ -148,7 +149,17 @@ export const RapydPayment: React.FC<{
       </div>
     );
 
-  if (["paid", "pending"].includes(status))
+  if (status === "pending")
+    return (
+      <div className="flex justify-center items-center flex-col my-6 text-center">
+        <MajesticonsClockLine fontSize={40} />
+        <h3 className="mt-4 text-sm font-semibold">
+          Please follow the instructions to complete the payment.
+        </h3>
+      </div>
+    );
+
+  if (status === "paid")
     return (
       <div className="flex justify-center items-center flex-col my-6 text-center">
         <MajesticonsCheckCircleLine fontSize={40} />

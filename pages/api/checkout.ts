@@ -14,6 +14,7 @@ const checkout = async (
         query ($id: uuid!) {
           payments_by_pk(id: $id) {
             id
+            short_id
             amount
             currency
             description
@@ -34,6 +35,7 @@ const checkout = async (
   let tip_amount = 0;
   if (tip && tip > 0 && tip <= 100)
     tip_amount = (parseInt(tip) / 100) * payment.amount;
+  const redirect_url = `${process.env.NEXT_PUBLIC_SHORT_URL}/${payment.short_id}`;
   const { data: checkout } = await new Rapyd(
     payment.account.access_key,
     payment.account.secret_key,
@@ -54,6 +56,8 @@ const checkout = async (
       payment_id: payment.id,
       tip_amount,
     },
+    cancel_checkout_url: redirect_url,
+    complete_checkout_url: redirect_url,
   });
   res.json({ id: checkout.id, sandbox: payment.account.sandbox });
 };
